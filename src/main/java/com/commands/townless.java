@@ -22,8 +22,7 @@ import com.utils.*;
 import com.google.gson.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -40,13 +39,13 @@ public class townless {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("townless")
                 .executes(context -> {
+                    
                     MinecraftClient client = MinecraftClient.getInstance();
 
                     if (client.player == null) {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
-
                     CompletableFuture.runAsync(() -> {
                         try {
                             List<String> players = new ArrayList<>();
@@ -87,13 +86,49 @@ public class townless {
                                 }
                             }
                         
-                            if (townless.isEmpty()) {
-                            }
+                          
+                            
                                                 
-                        client.execute(()->{
-                            sendMessage(client, Text.literal("Townless Users:"+townless));
-                        });
+                            client.execute(() -> {
+                                try {
+                                    if (townless.isEmpty()) {
+                                        sendMessage(client, Text.literal("No townless users found.").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                                        return;
+                                    }
+                                    JsonObject Payload = new JsonObject();
+                                    JsonArray query = new JsonArray();
+                                    query.add(client.player.getUuid().toString());
+                                    Payload.add("query", query);
+                                    String jsonResponse = new fetch().Fetch("https://api.earthmc.net/v3/aurora/players", Payload.toString());
+                                    JsonArray parsed = JsonParser.parseString(jsonResponse).getAsJsonArray();
+                                    MutableText message = Text.literal("Townless Users:\n").setStyle(Style.EMPTY.withColor(Formatting.AQUA));
+                                
+                                    for (String user : townless) {
+                                        String inviteMessage = "/msg " + user + " Hi! I see you're new here, wanna join my Town? I can help you out! Get Free enchanted Armor, Pickaxe, Diamonds, Iron, wood, food, stone, house, and ability to teleport! Type /t join " + parsed.get(0).getAsJsonObject().get("town").getAsJsonObject().get("name").getAsString();
+                                        
+                                        Text userText = Text.literal(user)
+                                            .setStyle(Style.EMPTY
+                                                .withColor(Formatting.GREEN)
+                                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, inviteMessage))
+                                                .withHoverEvent(new net.minecraft.text.HoverEvent(
+                                                    net.minecraft.text.HoverEvent.Action.SHOW_TEXT,
+                                                    Text.literal("Click to copy invite message for " + user)
+                                                ))
+                                            );
+                                
+                                        message.append(userText).append(Text.literal("\n"));
+                                    }
+                                
+                                    sendMessage(client, message);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    client.execute(() -> sendMessage(client, Text.literal("Command has exited with an exception").setStyle(Style.EMPTY.withColor(Formatting.RED))));
+                                    LOGGER.error("Command has exited with an exception: " + e.getMessage());
+                                }
+                            });
 
+                                
+                            
                         } catch (Exception e) {
                             e.printStackTrace();
                             client.execute(() -> sendMessage(client, Text.literal("Command has exited with an exception").setStyle(Style.EMPTY.withColor(Formatting.RED))));

@@ -26,21 +26,21 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import java.util.*;
 
-public class staff {
+public class friends {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
     public static void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
-                .<FabricClientCommandSource>literal("onlinestaff")
+                .<FabricClientCommandSource>literal("onlinefriends")
                 .executes(context -> {
                     MinecraftClient client = MinecraftClient.getInstance();
 
@@ -49,59 +49,67 @@ public class staff {
                         return 0;
                     }
 
-                    // Run the network request asynchronously to avoid freezing the game
                     CompletableFuture.runAsync(() -> {
                         try {
                             fetch Fetch = new fetch();
-                            
+                    
                             // Fetch and parse the JSON
-                            String jsonResponse = Fetch.Fetch("https://raw.githubusercontent.com/jwkerr/staff/master/staff.json", null);
-                            JsonObject staffJson = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-                            // Extract all UUIDs into a single list
-                            List<String> staffUuids = new ArrayList<>();
-                            for (String role : staffJson.keySet()) {
-                                JsonArray roleArray = staffJson.getAsJsonArray(role);
-                                for (JsonElement element : roleArray) {
-                                    if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
-                                        staffUuids.add(element.getAsString());
+                            JsonObject payload = new JsonObject();
+                            JsonArray query = new JsonArray();
+                            query.add(client.player.getUuid().toString());
+                            payload.add("query", query);
+                            JsonObject template = new JsonObject();
+                            template.addProperty("friends",true);
+                            payload.addProperty("template", template.toString());
+                            String jsonResponse = Fetch.Fetch("https://api.earthmc.net/v3/aurora/players", payload.toString());
+                    
+                            JsonArray user = JsonParser.parseString(jsonResponse).getAsJsonArray();
+                            JsonObject Friends = user.get(0).getAsJsonObject();
+                            // Ensure the user array is not empty
+                            if (user.size() == 0) {
+                                LOGGER.warn("User array is empty, no data available.");
+                                client.execute(() -> sendMessage(client, Text.literal("No friends data available").setStyle(Style.EMPTY.withColor(Formatting.DARK_RED))));
+                                return;
+                            }
+                    
+                            List<String> friends = new ArrayList<>();
+                    
+                            for (JsonElement friend : Friends.get("friends").getAsJsonArray()) {
+                                JsonObject Friend = friend.getAsJsonObject();
+                                Collection<PlayerListEntry> players = client.getNetworkHandler().getPlayerList();
+                                for (PlayerListEntry player : players) {
+                                    if (player.getProfile().getName().equals(Friend.get("name").getAsString())) {
+                                        friends.add(player.getProfile().getName());
                                     }
                                 }
                             }
-
-                            // Check online players
-                            List<String> onlineStaff = client.getNetworkHandler().getPlayerList().stream()
-                                .filter(entry -> staffUuids.contains(entry.getProfile().getId().toString()))
-                                .map(entry -> entry.getProfile().getName())
-                                .collect(Collectors.toList());
-
-                            // Display results
+                    
                             client.execute(() -> {
-                                if (!onlineStaff.isEmpty()) {
-                                    Text styledPart = Text.literal("Online Staff: ").setStyle(Style.EMPTY.withColor(Formatting.AQUA));
-                                    Text onlineStaffText = Text.literal(String.join(", ", onlineStaff))
+                                if (friends.isEmpty()) {
+                                    sendMessage(client, Text.literal("No friends online").setStyle(Style.EMPTY.withColor(Formatting.DARK_RED)));
+                                } else {
+                                    Text styledPart = Text.literal("Online Friends: ").setStyle(Style.EMPTY.withColor(Formatting.AQUA));
+                                    Text onlineStaffText = Text.literal(String.join(", ", friends))
                                         .setStyle(Style.EMPTY.withColor(Formatting.GREEN));
                                     Text message = Text.literal("")
                                         .append(styledPart)
                                         .append(onlineStaffText)
-                                        .append(" [" + onlineStaff.size() + "]");
+                                        .append(" [" + friends.size() + "]");
                                     sendMessage(client, message);
-                                } else {
-                                    sendMessage(client, Text.literal("No staff online").setStyle(Style.EMPTY.withColor(Formatting.DARK_RED)));
                                 }
                             });
-
                         } catch (Exception e) {
-                            LOGGER.error("An error occurred while fetching staff: ", e);
-                            client.execute(() -> sendMessage(client, Text.literal("An error occurred while fetching staff").setStyle(Style.EMPTY.withColor(Formatting.RED))));
+                            LOGGER.error("An error occurred while fetching friends: ", e);
+                            client.execute(() -> sendMessage(client, Text.literal("An error occurred while fetching friends").setStyle(Style.EMPTY.withColor(Formatting.RED))));
                         }
                     });
+            return 1;
 
-                    return 1;
-                });
+            });
+            dispatcher.register(command);  
 
-            dispatcher.register(command);
-        });
+        });            
+                
     }
 
     private static void sendMessage(MinecraftClient client, Text message) {

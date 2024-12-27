@@ -41,6 +41,7 @@ public class BreakTheMod implements ClientModInitializer {
             whereIs.register();
             GoTo.register();
             help.register();
+            friends.register();
         } else {
             LOGGER.error("Minecraft client instance is null, cannot initialize commands.");
         }
