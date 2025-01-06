@@ -38,7 +38,7 @@
 ---
 
 ## **Compatibility**
-- Compatible with Minecraft versions: `1.20.4`
+- Compatible with Minecraft versions: `>=1.20.4`
 ---
 
 ## **Contributing**
