@@ -74,9 +74,7 @@ Here are some ways you can contribute:
 ## **Submitting Changes**
 
 ### **Checklist Before Submitting**
-- [ ] Code compiles without errors.  
 - [ ] All changes are tested in the game.  
-- [ ] Includes documentation for new features or changes.  
 - [ ] Follows project coding standards.
 
 ### **Submitting a Pull Request**
@@ -94,8 +92,8 @@ Here are some ways you can contribute:
 ---
 
 ## **Need Help?**
-If you have questions, feel free to:  
-
+If you have questions, feel free to: 
+dm me on discord @charis_k
 ---
 
 Thank you for contributing to *BreakTheMod*! Your support is greatly appreciated. 🎉
