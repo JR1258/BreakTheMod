@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with <Your Project Name>. If not, see <https://www.gnu.org/licenses/>.
  */
-package com;
-
+package breakthemod;
+import breakthemod.commands.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.commands.*;
 
 public class BreakTheMod implements ClientModInitializer {
 

@@ -15,17 +15,13 @@
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.commands;
+package breakthemod.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.utils.Prefix;
-import com.utils.fetch;
-import com.google.gson.*;
+import breakthemod.utils.Prefix;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

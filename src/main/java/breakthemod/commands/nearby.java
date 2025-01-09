@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
-package com.commands;
+package breakthemod.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.client.MinecraftClient;
@@ -32,7 +32,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.Vec3d;
-import com.utils.Prefix;
+import breakthemod.utils.Prefix;
 import net.minecraft.util.Identifier;
 
 public class nearby {

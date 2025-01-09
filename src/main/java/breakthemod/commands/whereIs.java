@@ -15,11 +15,12 @@
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.commands;
+package breakthemod.commands;
 
+import breakthemod.utils.Prefix;
+import breakthemod.utils.fetch;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.utils.*;
 import com.google.gson.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Style;

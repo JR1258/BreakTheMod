@@ -15,7 +15,7 @@
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.utils;
+package breakthemod.utils;
 
 import java.time.Duration;
 import java.time.Instant;

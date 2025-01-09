@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with <Your Project Name>. If not, see <https://www.gnu.org/licenses/>.
  */
-package com.commands;
+package breakthemod.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.utils.Prefix;
-import com.utils.fetch;
+import breakthemod.utils.Prefix;
+import breakthemod.utils.fetch;
 import com.google.gson.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
+
 import java.util.concurrent.CompletableFuture;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 

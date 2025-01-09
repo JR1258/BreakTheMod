@@ -16,7 +16,9 @@
  */
 
 
-package com.commands;
+package breakthemod.commands;
+import breakthemod.utils.Prefix;
+import breakthemod.utils.fetch;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.utils.*;

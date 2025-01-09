@@ -26,7 +26,7 @@
 	  },
 	"entrypoints": {
 		"client": [
-			"com.BreakTheMod"
+			"net.chariskar.breakthemod.BreakTheMod"
 		]
 	},
 	"depends": {
