@@ -15,8 +15,11 @@
  * along with <Your Project Name>. If not, see <https://www.gnu.org/licenses/>.
  */
 package breakthemod;
+
 import breakthemod.commands.*;
+import breakthemod.utils.*;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,11 @@ public class BreakTheMod implements ClientModInitializer {
             GoTo.register();
             help.register();
             friends.register();
+            render Render = new render();
+            // Register a client tick event to call the update method regularly
+            HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+                Render.renderOverlay(drawContext, MinecraftClient.getInstance());
+            });
         } else {
             LOGGER.error("Minecraft client instance is null, cannot initialize commands.");
         }

@@ -33,7 +33,8 @@
 1. Download the mod from [Modrinth](https://modrinth.com/mod/breakthemod/).
 2. Install Fabric (if not already installed).  
 3. Place the mod `.jar` file in the `mods` folder of your Minecraft directory.  
-4. Launch Minecraft and enjoy!
+4. You are gonna need clothconfig2 >=13.0.138 and modmenu >=9.2.0
+5. Launch Minecraft and enjoy!
 
 ---
 

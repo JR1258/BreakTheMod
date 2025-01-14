@@ -52,15 +52,9 @@ public class fetch {
 
 
         HttpRequest request = requestBuilder.build();
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        String responseBody = response.body();
-        try (JsonReader reader = new JsonReader(new StringReader(responseBody))) {
-            reader.setLenient(true);
-            return responseBody;
-        } catch (JsonSyntaxException e) {
-            LOGGER.error("Failed to parse JSON. Response body: " + responseBody, e);
-            throw new Exception("Failed to parse JSON. Response body: " + responseBody, e);
-        }
+        return response.body();
     }
 }

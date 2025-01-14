@@ -49,84 +49,8 @@ public class nearby {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
-
-                    CompletableFuture.runAsync(() -> {
-                        try {
-                            List<String> playerInfoList = new ArrayList<>();
-
-                            for (Entity entity : client.world.getEntities()) {
-                                if (entity instanceof PlayerEntity && entity != client.player) {
-                                    PlayerEntity otherPlayer = (PlayerEntity) entity;
-
-                                    // Skip invisible players
-                                    if (otherPlayer.isInvisible()) {
-                                        continue;
-                                    }
-
-                                    // Check for the conditions to hide the player
-                                    boolean inRiptide = isPlayerInRiptideAnimation(otherPlayer);
-                                    boolean inNether = isInNether(otherPlayer);
-                                    boolean inVehicle = isInVehicle(otherPlayer);
-                                    boolean sneaking = isSneaking(otherPlayer);
-
-                                    // Skip the player if they are sneaking, in a vehicle, or in the Nether
-                                    if (sneaking || inVehicle || inNether || inRiptide) {
-                                        continue;
-                                    }
-
-                                    Vec3d otherPlayerPos = otherPlayer.getPos();
-                                    BlockPos playerBlockPos = new BlockPos(
-                                        (int) Math.floor(otherPlayerPos.getX()),
-                                        (int) Math.floor(otherPlayerPos.getY()),
-                                        (int) Math.floor(otherPlayerPos.getZ())
-                                    );
-
-                                    boolean isUnderAnyBlock = false;
-                                    for (int y = playerBlockPos.getY() + 1; y <= client.world.getTopY(); y++) { 
-                                        BlockPos checkPos = new BlockPos(playerBlockPos.getX(), y, playerBlockPos.getZ());
-                                        BlockState blockStateAbove = client.world.getBlockState(checkPos);
-
-                                        if (!blockStateAbove.isAir()) { 
-                                            isUnderAnyBlock = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!isUnderAnyBlock) { 
-                                        double distance = client.player.getPos().distanceTo(otherPlayerPos);
-                                        String otherPlayerName = otherPlayer.getName().getString();
-                                        int x = (int) otherPlayerPos.getX();
-                                        int z = (int) otherPlayerPos.getZ();
-
-                                        String status = "";
-                                        playerInfoList.add(String.format("- %s (%d, %d) distance: %.1f blocks %s",
-                                            otherPlayerName, x, z, distance, status));
-                                    }
-                                }
-                            }
-
-                            if (playerInfoList.isEmpty()) {
-                                client.execute(() -> sendMessage(client, Text.literal("There are no players nearby").setStyle(Style.EMPTY.withColor(Formatting.RED))));
-                                return;
-                            }
-
-                            MutableText header = Text.literal("Players nearby:\n").setStyle(Style.EMPTY.withColor(Formatting.YELLOW));
-                            MutableText playersText = Text.literal("");
-
-                            for (String playerInfo : playerInfoList) {
-                                playersText.append(Text.literal(playerInfo + "\n").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
-                            }
-
-                            client.execute(() -> sendMessage(client, header.append(playersText)));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            client.execute(() -> sendMessage(client, Text.literal("Command has exited with an exception").setStyle(Style.EMPTY.withColor(Formatting.RED))));
-                            LOGGER.error("Fetch has exited with an exception: " + e.getMessage());
-                        }
-                    });
-
-                    return 1;
+                    nearby.nearby(client);
+                   return 1;
                 });
 
             dispatcher.register(command);
@@ -150,6 +74,83 @@ public class nearby {
 
     private static boolean isSneaking(PlayerEntity player) {
         return player.isSneaking();
+    }
+
+    public static void nearby(MinecraftClient client){
+        CompletableFuture.runAsync(() -> {
+            try {
+                List<String> playerInfoList = new ArrayList<>();
+
+                for (Entity entity : client.world.getEntities()) {
+                    if (entity instanceof PlayerEntity otherPlayer && entity != client.player) {
+
+                        // Skip invisible players
+                        if (otherPlayer.isInvisible()) {
+                            continue;
+                        }
+
+                        // Check for the conditions to hide the player
+                        boolean inRiptide = isPlayerInRiptideAnimation(otherPlayer);
+                        boolean inNether = isInNether(otherPlayer);
+                        boolean inVehicle = isInVehicle(otherPlayer);
+                        boolean sneaking = isSneaking(otherPlayer);
+
+                        // Skip the player if they are sneaking, in a vehicle, or in the Nether
+                        if (sneaking || inVehicle || inNether || inRiptide) {
+                            continue;
+                        }
+
+                        Vec3d otherPlayerPos = otherPlayer.getPos();
+                        BlockPos playerBlockPos = new BlockPos(
+                                (int) Math.floor(otherPlayerPos.getX()),
+                                (int) Math.floor(otherPlayerPos.getY()),
+                                (int) Math.floor(otherPlayerPos.getZ())
+                        );
+
+                        boolean isUnderAnyBlock = false;
+                        for (int y = playerBlockPos.getY() + 1; y <= client.world.getTopY(); y++) {
+                            BlockPos checkPos = new BlockPos(playerBlockPos.getX(), y, playerBlockPos.getZ());
+                            BlockState blockStateAbove = client.world.getBlockState(checkPos);
+
+                            if (!blockStateAbove.isAir()) {
+                                isUnderAnyBlock = true;
+                                break;
+                            }
+                        }
+
+                        if (!isUnderAnyBlock) {
+                            double distance = client.player.getPos().distanceTo(otherPlayerPos);
+                            String otherPlayerName = otherPlayer.getName().getString();
+                            int x = (int) otherPlayerPos.getX();
+                            int z = (int) otherPlayerPos.getZ();
+
+                            String status = "";
+                            playerInfoList.add(String.format("- %s (%d, %d) distance: %.1f blocks %s",
+                                    otherPlayerName, x, z, distance, status));
+                        }
+                    }
+                }
+
+                if (playerInfoList.isEmpty()) {
+                    client.execute(() -> sendMessage(client, Text.literal("There are no players nearby").setStyle(Style.EMPTY.withColor(Formatting.RED))));
+                    return;
+                }
+
+                MutableText header = Text.literal("Players nearby:\n").setStyle(Style.EMPTY.withColor(Formatting.YELLOW));
+                MutableText playersText = Text.literal("");
+
+                for (String playerInfo : playerInfoList) {
+                    playersText.append(Text.literal(playerInfo + "\n").setStyle(Style.EMPTY.withColor(Formatting.AQUA)));
+                }
+
+                client.execute(() -> sendMessage(client, header.append(playersText)));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                client.execute(() -> sendMessage(client, Text.literal("Command has exited with an exception").setStyle(Style.EMPTY.withColor(Formatting.RED))));
+                LOGGER.error("Nearby has exited with an exception: " + e.getMessage());
+            }
+        });
     }
 
     private static void sendMessage(MinecraftClient client, Text message) {

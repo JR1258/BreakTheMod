@@ -94,7 +94,7 @@ public class discord {
                                 );
                                 JsonArray earthMCData = JsonParser.parseString(emcResponse).getAsJsonArray();
 
-                                if (earthMCData.size() > 0) {
+                                if (!earthMCData.isEmpty()) {
                                     JsonObject discordData = earthMCData.get(0).getAsJsonObject();
                                     String discordID = discordData.get("id").getAsString();
 
