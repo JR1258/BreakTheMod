@@ -27,7 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import breakthemod.utils.config.WidgetPosition;
 import java.util.*;
 
 public class render {
@@ -43,9 +43,6 @@ public class render {
     private static long lastUpdateTime = 0;
     private static final long UPDATE_INTERVAL = 1000; // Update every 1 second
 
-    public enum WidgetPosition {
-        TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CUSTOM, TOP_LEFT
-    }
 
     public static void setCustomPosition(int x, int y) {
         customX = x;
@@ -156,42 +153,56 @@ public class render {
         if (client.world == null || client.player == null) {
             return;
         }
-
+        config Config = new config();
+        widgetPosition = Config.getWidgetPosition();
         // Update the player list every second
         updateNearbyPlayers(client);
 
         TextRenderer textRenderer = client.textRenderer;
 
-        // Determine position
-        int x = switch (widgetPosition) {
-            case TOP_RIGHT, BOTTOM_RIGHT -> client.getWindow().getScaledWidth() - 210;
-            case CUSTOM -> customX;
-            default -> 10;
-        };
-
-        int y = switch (widgetPosition) {
-            case BOTTOM_LEFT -> client.getWindow().getScaledHeight() - (20 + playerList.size() * 15 + 10); // Adjusted for new spacing
-            case BOTTOM_RIGHT -> client.getWindow().getScaledHeight() - (20 + playerList.size() * 15 + 10); // Adjusted for new spacing
-            case CUSTOM -> customY;
-            default -> 10;
-        };
-
-        // Adjusted spacing between entries
-        int entryHeight = 15; // Increased from 10 to 15 for more spacing
+        // Calculate the widget dimensions
+        int entryHeight = 15; // Spacing between lines
         int width = playerList.stream().mapToInt(String::length).max().orElse(20) * 6 + 2 * MARGIN;
         int height = Math.max(20 + playerList.size() * entryHeight, 40);
 
+        // Determine position based on the widgetPosition
+        int x = 0, y = 0;
+        switch (widgetPosition) {
+            case TOP_RIGHT -> {
+                x = client.getWindow().getScaledWidth() - width - MARGIN;
+                y = MARGIN;
+            }
+            case BOTTOM_LEFT -> {
+                x = MARGIN;
+                y = client.getWindow().getScaledHeight() - height - MARGIN;
+            }
+            case BOTTOM_RIGHT -> {
+                x = client.getWindow().getScaledWidth() - width - MARGIN;
+                y = client.getWindow().getScaledHeight() - height - MARGIN;
+            }
+            case CUSTOM -> {
+                x = customX;
+                y = customY;
+            }
+            case TOP_LEFT -> { // Default case
+                x = MARGIN;
+                y = MARGIN;
+            }
+        }
+
+
         // Render the box
-        drawContext.fill(x, y, x + width, y + height, 0x80000000); // Semi-transparent black
+        drawContext.fill(x, y, x + width, y + height, 0x80000000); // Semi-transparent black background
 
         // Render the text
-        int textY = y + 5;
+        int textY = y + 5; // Initial Y offset for text
         synchronized (playerList) {
             for (String line : playerList) {
-                drawContext.drawTextWithShadow(textRenderer, line, x + MARGIN, textY, 0xFFFFFF);
-                textY += entryHeight; // Use the adjusted entryHeight for spacing
+                drawContext.drawTextWithShadow(textRenderer, line, x + MARGIN, textY, 0xFFFFFF); // White text with shadow
+                textY += entryHeight; // Move to the next line
             }
         }
     }
+
 
 }

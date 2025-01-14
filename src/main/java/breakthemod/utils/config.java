@@ -89,6 +89,7 @@ public class config {
                 .setMin(0)
                 .setMax(MinecraftClient.getInstance().currentScreen.height) // Max value for screen height (adjust if needed)
                 .build()
+
         );
 
         general.addEntry(entryBuilder.startBooleanToggle(
@@ -132,11 +133,9 @@ public class config {
     // Save configuration to file
     public void saveConfig() {
         JsonObject configJson = new JsonObject();
-        if (customX > 0 || customY > 0) {
-            configJson.addProperty("widgetPosition", widgetPosition.CUSTOM.name());
-        } else {
-            configJson.addProperty("widgetPosition", widgetPosition.name());
-        }
+
+        configJson.addProperty("widgetPosition", widgetPosition.name());
+
         configJson.addProperty("customX", customX);
         configJson.addProperty("customY", customY);
         configJson.addProperty("radarEnabled",radarEnabled);

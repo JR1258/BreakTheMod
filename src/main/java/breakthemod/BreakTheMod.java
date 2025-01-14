@@ -48,6 +48,7 @@ public class BreakTheMod implements ClientModInitializer {
             HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
                 Render.renderOverlay(drawContext, MinecraftClient.getInstance());
             });
+
         } else {
             LOGGER.error("Minecraft client instance is null, cannot initialize commands.");
         }
