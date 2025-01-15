@@ -43,17 +43,6 @@ public class render {
     private static long lastUpdateTime = 0;
     private static final long UPDATE_INTERVAL = 1000; // Update every 1 second
 
-
-    public static void setCustomPosition(int x, int y) {
-        customX = x;
-        customY = y;
-        widgetPosition = WidgetPosition.CUSTOM;
-    }
-
-    public static void setWidgetPosition(WidgetPosition position) {
-        widgetPosition = position;
-    }
-
     /**
      * Updates the nearby player information asynchronously.
      */
