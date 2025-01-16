@@ -50,3 +50,4 @@ buid/
 safe_builds
 handle.bat
 handle.bat
+*.bak
