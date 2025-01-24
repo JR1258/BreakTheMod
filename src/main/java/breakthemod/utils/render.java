@@ -143,6 +143,7 @@ public class render {
             return;
         }
         config Config = new config();
+        if (!config.radarEnabled) return;
         widgetPosition = Config.getWidgetPosition();
         // Update the player list every second
         updateNearbyPlayers(client);
