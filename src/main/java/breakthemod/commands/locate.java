@@ -42,7 +42,7 @@ public class locate {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("locate")
                 .then(RequiredArgumentBuilder
-                    .<FabricClientCommandSource, String>argument("name", StringArgumentType.string())
+                    .<FabricClientCommandSource, String>argument("name", StringArgumentType.greedyString())
                     .then(RequiredArgumentBuilder
                         .<FabricClientCommandSource, String>argument("type", StringArgumentType.string())
                         .executes(context -> {
