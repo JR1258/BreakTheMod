@@ -15,8 +15,8 @@
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 package breakthemod.commands;
+
 import breakthemod.utils.Prefix;
 import breakthemod.utils.fetch;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -39,78 +39,86 @@ public class locate {
 
     public static void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
-                .<FabricClientCommandSource>literal("locate")
-                .then(RequiredArgumentBuilder
-                    .<FabricClientCommandSource, String>argument("name", StringArgumentType.greedyString())
+            dispatcher.register(LiteralArgumentBuilder
+                    .<FabricClientCommandSource>literal("locate")
                     .then(RequiredArgumentBuilder
-                        .<FabricClientCommandSource, String>argument("type", StringArgumentType.string())
-                        .executes(context -> {
-                            String name = StringArgumentType.getString(context, "name");
-                            String type = StringArgumentType.getString(context, "type").toLowerCase();
-                            MinecraftClient client = MinecraftClient.getInstance();
+                            .<FabricClientCommandSource, String>argument("name", StringArgumentType.word())
+                            .then(RequiredArgumentBuilder
+                                    .<FabricClientCommandSource, String>argument("type", StringArgumentType.word())
+                                    .executes(context -> {
+                                        String name = StringArgumentType.getString(context, "name");
+                                        String type = StringArgumentType.getString(context, "type").toLowerCase();
 
-                            if (client.player == null) {
-                                LOGGER.error("Player instance is null, cannot send feedback.");
-                                return 0;
-                            }
+                                        MinecraftClient client = MinecraftClient.getInstance();
 
-                            CompletableFuture.runAsync(() -> {
-                                try {
-                                    fetch FetchInstance = new fetch();
-                                    JsonObject payload = new JsonObject();
-                                    JsonArray queryArray = new JsonArray();
-                                    queryArray.add(name);
-                                    payload.add("query", queryArray);  
-                                    JsonObject template = new JsonObject();
-                                    template.addProperty("coordinates", true);  
-                                    payload.add("template", template);
+                                        if (client.player == null) {
+                                            LOGGER.error("Player instance is null, cannot send feedback.");
+                                            return 0;
+                                        }
 
-                                    String apiUrl = "";
-                                    if ("town".equals(type)) {
-                                        apiUrl = "https://api.earthmc.net/v3/aurora/towns";
-                                    } else if ("nation".equals(type)) {
-                                        apiUrl = "https://api.earthmc.net/v3/aurora/nations";
-                                    } else {
-                                        client.player.sendMessage(Text.literal("Invalid type! Use 'town' or 'nation'.").setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
-                                        return;
-                                    }
+                                        CompletableFuture.runAsync(() -> {
+                                            try {
+                                                fetch FetchInstance = new fetch();
+                                                JsonObject payload = new JsonObject();
+                                                JsonArray queryArray = new JsonArray();
+                                                queryArray.add(name);
+                                                payload.add("query", queryArray);
+                                                JsonObject template = new JsonObject();
+                                                template.addProperty("coordinates", true);
+                                                payload.add("template", template);
 
-                                    JsonArray response = JsonParser.parseString(FetchInstance.Fetch(apiUrl, payload.toString())).getAsJsonArray();
+                                                String apiUrl = "";
+                                                if ("town".equals(type)) {
+                                                    apiUrl = "https://api.earthmc.net/v3/aurora/towns";
+                                                } else if ("nation".equals(type)) {
+                                                    apiUrl = "https://api.earthmc.net/v3/aurora/nations";
+                                                } else {
+                                                    client.execute(() -> {
+                                                        sendMessage(client, Text.literal("Invalid type! Use 'town' or 'nation'.")
+                                                                .setStyle(Style.EMPTY.withColor(Formatting.RED)));
+                                                    });
+                                                    return;
+                                                }
 
-                                    if (response.size() > 0) {
-                                        JsonObject coordinates = response.get(0).getAsJsonObject().get("coordinates").getAsJsonObject().get("spawn").getAsJsonObject();
-                                        int x = coordinates.get("x").getAsInt();
-                                        int z = coordinates.get("z").getAsInt();
+                                                JsonArray response = JsonParser.parseString(FetchInstance.Fetch(apiUrl, payload.toString())).getAsJsonArray();
 
-                                        String hyperlink = String.format("https://map.earthmc.net/?world=minecraft_overworld&zoom=3&x=%d&z=%d", x, z);
-                                        Text message = Text.literal(String.format("%s is located at X: %d, Z: %d. ", name, x, z))
-                                            .append(Text.literal("Click Here").formatted(Formatting.AQUA).setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, hyperlink))));
-                                        
-                                        client.execute(()->{
-                                            sendMessage(client, message);
+                                                if (response.size() > 0) {
+                                                    JsonObject coordinates = response.get(0).getAsJsonObject()
+                                                            .get("coordinates").getAsJsonObject()
+                                                            .get("spawn").getAsJsonObject();
+                                                    int x = coordinates.get("x").getAsInt();
+                                                    int z = coordinates.get("z").getAsInt();
+
+                                                    String hyperlink = String.format(
+                                                            "https://map.earthmc.net/?world=minecraft_overworld&zoom=3&x=%d&z=%d",
+                                                            x, z
+                                                    );
+                                                    Text message = Text.literal(String.format("%s is located at X: %d, Z: %d. ", name, x, z))
+                                                            .append(Text.literal("Click Here")
+                                                                    .formatted(Formatting.AQUA)
+                                                                    .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, hyperlink))));
+
+                                                    client.execute(() -> sendMessage(client, message));
+                                                } else {
+                                                    client.execute(() -> sendMessage(client, Text.literal("Location not found.")
+                                                            .setStyle(Style.EMPTY.withColor(Formatting.RED))));
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                                client.execute(() -> sendMessage(client, Text.literal("Command exited with an exception.")
+                                                        .setStyle(Style.EMPTY.withColor(Formatting.RED))));
+                                                LOGGER.error("Command exited with an exception: " + e.getMessage());
+                                            }
                                         });
 
-                                    } else {
-                                        client.execute(()->{
-                                            sendMessage(client, Text.literal("Location not found.").setStyle(Style.EMPTY.withColor(Formatting.RED)));
-                                        });
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    client.player.sendMessage(Text.literal("Command exited with an exception.").setStyle(Style.EMPTY.withColor(Formatting.RED)), false);
-                                    LOGGER.error("Command exited with an exception: " + e.getMessage());
-                                }
-                            });
-
-                            return 1;  // Command executed successfully
-                        })
+                                        return 1;
+                                    })
+                            )
                     )
-                );
-
-            dispatcher.register(command);
+            );
         });
     }
+
     private static void sendMessage(MinecraftClient client, Text message) {
         client.execute(() -> {
             if (client.player != null) {
