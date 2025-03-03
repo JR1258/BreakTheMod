@@ -21,6 +21,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Formatting;
 import net.minecraft.text.*;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -33,7 +35,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.Vec3d;
 import breakthemod.utils.Prefix;
-import net.minecraft.util.Identifier;
 
 public class nearby {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
@@ -62,9 +63,9 @@ public class nearby {
     }
 
     private static boolean isInNether(PlayerEntity player) {
-        // Check if the player is in the Nether based on dimension ID
-        return player.getWorld().getRegistryKey().getValue().equals(new Identifier("minecraft", "nether"));
+        return player.getWorld().getRegistryKey() == World.NETHER;
     }
+
 
     private static boolean isInVehicle(PlayerEntity player) {
         return player.getVehicle() != null && 
@@ -108,10 +109,10 @@ public class nearby {
                         );
 
                         boolean isUnderAnyBlock = false;
-                        for (int y = playerBlockPos.getY() + 1; y <= client.world.getTopY(); y++) {
+                        int topY = client.world.getTopY(Heightmap.Type.MOTION_BLOCKING, playerBlockPos.getX(), playerBlockPos.getZ());
+                        for (int y = playerBlockPos.getY() + 1; y <= topY; y++) {
                             BlockPos checkPos = new BlockPos(playerBlockPos.getX(), y, playerBlockPos.getZ());
                             BlockState blockStateAbove = client.world.getBlockState(checkPos);
-
                             if (!blockStateAbove.isAir()) {
                                 isUnderAnyBlock = true;
                                 break;
@@ -124,9 +125,12 @@ public class nearby {
                             int x = (int) otherPlayerPos.getX();
                             int z = (int) otherPlayerPos.getZ();
 
-                            String status = "";
-                            playerInfoList.add(String.format("- %s (%d, %d) distance: %.1f blocks %s",
-                                    otherPlayerName, x, z, distance, status));
+                            String direction = getDirectionFromYaw(otherPlayer.getYaw());
+
+                            playerInfoList.add(String.format(
+                                    "- %s (%d, %d) direction: %s, distance: %.1f blocks",
+                                    otherPlayerName, x, z, direction, distance
+                            ));
                         }
                     }
                 }
@@ -161,5 +165,18 @@ public class nearby {
                 client.player.sendMessage(chatMessage, false);
             }
         });
+    }
+
+    public static String getDirectionFromYaw(float yaw) {
+        yaw = (yaw % 360 + 360) % 360; // Normalize yaw to [0, 360)
+        if (yaw >= 337.5 || yaw < 22.5) return "South";
+        if (yaw >= 22.5 && yaw < 67.5) return "Southwest";
+        if (yaw >= 67.5 && yaw < 112.5) return "West";
+        if (yaw >= 112.5 && yaw < 157.5) return "Northwest";
+        if (yaw >= 157.5 && yaw < 202.5) return "North";
+        if (yaw >= 202.5 && yaw < 247.5) return "Northeast";
+        if (yaw >= 247.5 && yaw < 292.5) return "East";
+        if (yaw >= 292.5 && yaw < 337.5) return "Southeast";
+        return "Unknown";
     }
 }

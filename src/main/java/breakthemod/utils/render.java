@@ -25,10 +25,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import breakthemod.utils.config.WidgetPosition;
 import java.util.*;
+import breakthemod.commands.nearby;
 
 public class render {
 
@@ -117,7 +120,7 @@ public class render {
     }
 
     private static boolean isInNether(PlayerEntity player) {
-        return player.getWorld().getRegistryKey().getValue().equals(new Identifier("minecraft", "nether"));
+        return player.getWorld().getRegistryKey() == World.NETHER;
     }
 
     private static boolean isInVehicle(PlayerEntity player) {
@@ -125,11 +128,14 @@ public class render {
     }
 
     private static boolean isPlayerUnderBlock(MinecraftClient client, BlockPos playerBlockPos) {
-        for (int y = playerBlockPos.getY() + 1; y <= client.world.getTopY(); y++) {
+        boolean isUnderAnyBlock = false;
+        int topY = client.world.getTopY(Heightmap.Type.MOTION_BLOCKING, playerBlockPos.getX(), playerBlockPos.getZ());
+        for (int y = playerBlockPos.getY() + 1; y <= topY; y++) {
             BlockPos checkPos = new BlockPos(playerBlockPos.getX(), y, playerBlockPos.getZ());
             BlockState blockStateAbove = client.world.getBlockState(checkPos);
             if (!blockStateAbove.isAir()) {
-                return true;
+                isUnderAnyBlock = true;
+                break;
             }
         }
         return false;
@@ -138,7 +144,7 @@ public class render {
     /**
      * Renders an overlay using DrawContext.
      */
-    public static void renderOverlay(DrawContext drawContext, MinecraftClient client) {
+    public void renderOverlay(DrawContext drawContext, MinecraftClient client) {
         if (client.world == null || client.player == null) {
             return;
         }

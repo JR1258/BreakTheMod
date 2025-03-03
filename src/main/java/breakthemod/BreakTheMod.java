@@ -47,7 +47,7 @@ public class BreakTheMod implements ClientModInitializer {
 
             render Render = new render();
             // Register a client tick event to call the update method regularly
-            if (client.getGameVersion().equals("1.20.4")){
+            if (client.getGameVersion().equals("1.21.4")){
                 HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
                     Render.renderOverlay(drawContext, MinecraftClient.getInstance());
                 });
