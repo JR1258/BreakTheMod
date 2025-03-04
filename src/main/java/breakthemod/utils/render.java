@@ -138,7 +138,7 @@ public class render {
                 break;
             }
         }
-        return false;
+        return isUnderAnyBlock;
     }
 
     /**
@@ -148,8 +148,10 @@ public class render {
         if (client.world == null || client.player == null) {
             return;
         }
+
         config Config = new config();
-        if (!config.radarEnabled) return;
+        Config.loadConfig();
+        if (!Config.radarEnabled) return;
         widgetPosition = Config.getWidgetPosition();
         // Update the player list every second
         updateNearbyPlayers(client);

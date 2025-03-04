@@ -39,7 +39,6 @@ public class config {
     // Config file and Gson instance for saving/loading settings
     private static final File configFile = new File(MinecraftClient.getInstance().runDirectory, "config/breakthemod_config.json");
     private static final Gson gson = new Gson();
-
     // Method to create the config screen
     public Screen widget(Screen parent) {
         // Load the saved configuration before creating the screen
