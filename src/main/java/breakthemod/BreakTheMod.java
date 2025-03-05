@@ -23,7 +23,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+// TODO: Retire HudRenderCallback for the newer version of the api (i forgot the name)
 public class BreakTheMod implements ClientModInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");

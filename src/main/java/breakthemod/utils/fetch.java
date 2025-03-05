@@ -17,9 +17,6 @@
 
 package breakthemod.utils;
 
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.JsonReader;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

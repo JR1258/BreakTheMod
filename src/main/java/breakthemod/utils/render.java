@@ -99,14 +99,14 @@ public class render {
 
     private static String getDirectionFromYaw(float yaw) {
         yaw = (yaw % 360 + 360) % 360; // Normalize yaw to [0, 360)
-        if (yaw >= 337.5 || yaw < 22.5) return "South";
-        if (yaw >= 22.5 && yaw < 67.5) return "Southwest";
-        if (yaw >= 67.5 && yaw < 112.5) return "West";
-        if (yaw >= 112.5 && yaw < 157.5) return "Northwest";
-        if (yaw >= 157.5 && yaw < 202.5) return "North";
-        if (yaw >= 202.5 && yaw < 247.5) return "Northeast";
-        if (yaw >= 247.5 && yaw < 292.5) return "East";
-        if (yaw >= 292.5 && yaw < 337.5) return "Southeast";
+        if (yaw >= 337.5 || yaw < 22.5) return "S";
+        if (yaw >= 22.5 && yaw < 67.5) return "SW";
+        if (yaw >= 67.5 && yaw < 112.5) return "W";
+        if (yaw >= 112.5 && yaw < 157.5) return "NW";
+        if (yaw >= 157.5 && yaw < 202.5) return "N";
+        if (yaw >= 202.5 && yaw < 247.5) return "NE";
+        if (yaw >= 247.5 && yaw < 292.5) return "E";
+        if (yaw >= 292.5 && yaw < 337.5) return "SE";
         return "Unknown";
     }
 
@@ -154,17 +154,18 @@ public class render {
         if (!Config.getRadarEnabled()) return;
 
         widgetPosition = Config.getWidgetPosition();
-        // Update the player list every second
         updateNearbyPlayers(client);
 
         TextRenderer textRenderer = client.textRenderer;
 
-        // Calculate the widget dimensions
-        int entryHeight = 15; // Spacing between lines
-        int width = playerList.stream().mapToInt(String::length).max().orElse(20) * 6 + 2 * MARGIN;
+        int entryHeight = 15;
+        int width = playerList.stream()
+                .mapToInt(textRenderer::getWidth)
+                .max()
+                .orElse(20) + 2 * MARGIN;
+
         int height = Math.max(20 + playerList.size() * entryHeight, 40);
 
-        // Determine position based on the widgetPosition
         int x = 0, y = 0;
         switch (widgetPosition) {
             case TOP_RIGHT -> {
@@ -190,15 +191,11 @@ public class render {
         }
 
 
-        // Render the box
-        drawContext.fill(x, y, x + width, y + height, 0x80000000); // Semi-transparent black background
-
-        // Render the text
-        int textY = y + 5; // Initial Y offset for text
+        int textY = y + 5;
         synchronized (playerList) {
             for (String line : playerList) {
-                drawContext.drawTextWithShadow(textRenderer, line, x + MARGIN, textY, 0xFFFFFF); // White text with shadow
-                textY += entryHeight; // Move to the next line
+                drawContext.drawText(textRenderer, line, x + MARGIN, textY, 0xFFFFFF, false);
+                textY += entryHeight;
             }
         }
     }
