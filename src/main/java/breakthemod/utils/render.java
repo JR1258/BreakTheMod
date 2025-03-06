@@ -98,7 +98,11 @@ public class render {
     }
 
     private static String getDirectionFromYaw(float yaw) {
-        yaw = (yaw % 360 + 360) % 360; // Normalize yaw to [0, 360)
+        yaw = (yaw + 180) % 360;
+        if (yaw < 0) {
+            yaw += 360;
+        }
+
         if (yaw >= 337.5 || yaw < 22.5) return "S";
         if (yaw >= 22.5 && yaw < 67.5) return "SW";
         if (yaw >= 67.5 && yaw < 112.5) return "W";
@@ -109,6 +113,7 @@ public class render {
         if (yaw >= 292.5 && yaw < 337.5) return "SE";
         return "Unknown";
     }
+
 
     private static boolean shouldSkipPlayer(PlayerEntity player, MinecraftClient client) {
         return player.isInvisible() || isPlayerInRiptideAnimation(player) || isInNether(player)
