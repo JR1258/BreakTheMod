@@ -66,7 +66,7 @@ public class friends {
                             JsonArray user = JsonParser.parseString(jsonResponse).getAsJsonArray();
                             JsonObject Friends = user.get(0).getAsJsonObject();
                             // Ensure the user array is not empty
-                            if (user.size() == 0) {
+                            if (user.isEmpty()) {
                                 LOGGER.warn("User array is empty, no data available.");
                                 client.execute(() -> sendMessage(client, Text.literal("No friends data available").setStyle(Style.EMPTY.withColor(Formatting.DARK_RED))));
                                 return;

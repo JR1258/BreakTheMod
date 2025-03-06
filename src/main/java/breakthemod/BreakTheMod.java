@@ -23,7 +23,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-// TODO: Retire HudRenderCallback for the newer version of the api (i forgot the name)
+
 public class BreakTheMod implements ClientModInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
@@ -31,30 +31,27 @@ public class BreakTheMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client != null) {
-            // Register commands
-            nearby.register();
-            lastSeen.register();
-            locate.register();
-            coords.register();
-            discord.register();
-            staff.register();
-            townless.register();
-            whereIs.register();
-            GoTo.register();
-            help.register();
-            friends.register();
+        if (client == null)  LOGGER.error("Minecraft client instance is null, cannot initialize commands.");
+        // Register commands
+        nearby.register();
+        lastSeen.register();
+        locate.register();
+        coords.register();
+        discord.register();
+        staff.register();
+        townless.register();
+        whereIs.register();
+        GoTo.register();
+        help.register();
+        friends.register();
 
-            render Render = new render();
-            // Register a client tick event to call the update method regularly
-            if (client.getGameVersion().equals("1.21.4")){
-                HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
-                    Render.renderOverlay(drawContext, MinecraftClient.getInstance());
-                });
-            }
-        } else {
-            LOGGER.error("Minecraft client instance is null, cannot initialize commands.");
-        }
+        render Render = new render();
+        // Dont think im gonna move to the new thing, too much work
+        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+            Render.renderOverlay(drawContext, MinecraftClient.getInstance());
+        });
+
+
     }
 
 }

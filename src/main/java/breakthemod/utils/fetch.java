@@ -47,7 +47,6 @@ public class fetch {
             requestBuilder.GET();
         }
 
-
         HttpRequest request = requestBuilder.build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
