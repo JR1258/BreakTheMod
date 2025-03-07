@@ -36,6 +36,7 @@ public class fetch {
      * @throws Exception It covers all possible exceptions
      * @deprecated
      */
+    @Deprecated
     public String Fetch(String url, String payload) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
@@ -61,11 +62,8 @@ public class fetch {
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json");
 
-        if (payload != null) {
-            requestBuilder.POST(HttpRequest.BodyPublishers.ofString(payload));
-        } else {
-            requestBuilder.GET();
-        }
+        requestBuilder.POST(HttpRequest.BodyPublishers.ofString(payload));
+
 
         HttpRequest request = requestBuilder.build();
 
