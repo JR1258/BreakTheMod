@@ -49,13 +49,14 @@ public class help {
                                 throw new IllegalStateException("Minecraft client or world is null.");
                             }
                             Text GoTo = Text.literal("goto: Tells you how to get to a town that is not public");
-                            Text Coords = Text.literal("coords: Gives you infromation about a location");
+                            Text Coords = Text.literal("coords: Gives you information about a location");
                             Text Locate = Text.literal("locate: It gives you a towns coords");
                             Text Nearby = Text.literal("nearby: Tells you all nearby users, if they are visible on the map so its legal");
-                            Text WhereIs = Text.literal("whereIs: Tells you where a player is if they are visible on the mapd");
+                            Text WhereIs = Text.literal("whereIs: Tells you where a player is if they are visible on the map");
                             Text Staff = Text.literal("onlineStaff: Tells you which staff are online");
                             Text Discord = Text.literal("discordLinked: Shows you a players discord account if they have linked it");
                             Text Townless = Text.literal("townless: It shows you townless players");
+
                             client.execute(()->{
                                 sendMessage(client, Text.literal("Commands:").setStyle(Style.EMPTY.withBold(true)));
                                 sendMessage(client, GoTo);

@@ -70,7 +70,7 @@ public class coords {
 
                                     String apiUrl = "https://api.earthmc.net/v3/aurora/location";
 
-                                    JsonArray locationData = JsonParser.parseString(FetchInstance.Fetch(apiUrl, payload.toString())).getAsJsonArray();
+                                    JsonArray locationData = JsonParser.parseString(FetchInstance.PostRequest(apiUrl, payload.toString())).getAsJsonArray();
 
                                     if (locationData != null && locationData.size() == 1 && locationData.get(0).isJsonObject()) {
                                         JsonObject data = locationData.get(0).getAsJsonObject();

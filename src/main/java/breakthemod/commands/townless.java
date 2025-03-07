@@ -100,7 +100,7 @@ public class townless {
                                     JsonArray query = new JsonArray();
                                     query.add(client.player.getUuid().toString());
                                     Payload.add("query", query);
-                                    String jsonResponse = new fetch().Fetch("https://api.earthmc.net/v3/aurora/players", Payload.toString());
+                                    String jsonResponse = new fetch().PostRequest("https://api.earthmc.net/v3/aurora/players", Payload.toString());
                                     JsonArray parsed = JsonParser.parseString(jsonResponse).getAsJsonArray();
                                     MutableText message = Text.literal("Townless Users:\n").setStyle(Style.EMPTY.withColor(Formatting.AQUA));
                                 

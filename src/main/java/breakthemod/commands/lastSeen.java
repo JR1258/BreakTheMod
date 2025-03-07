@@ -65,7 +65,7 @@ public class lastSeen {
                                 
                                 payload.add("template", template);
 
-                                String response = new fetch().Fetch("https://api.earthmc.net/v3/aurora/players", payload.toString());
+                                String response = new fetch().PostRequest("https://api.earthmc.net/v3/aurora/players", payload.toString());
 
                                 JsonElement element = JsonParser.parseString(response);
                                 if (!element.isJsonArray()) {

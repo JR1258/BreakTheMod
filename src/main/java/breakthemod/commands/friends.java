@@ -61,7 +61,7 @@ public class friends {
                             JsonObject template = new JsonObject();
                             template.addProperty("friends",true);
                             payload.addProperty("template", template.toString());
-                            String jsonResponse = Fetch.Fetch("https://api.earthmc.net/v3/aurora/players", payload.toString());
+                            String jsonResponse = Fetch.PostRequest("https://api.earthmc.net/v3/aurora/players", payload.toString());
 
                             JsonArray user = JsonParser.parseString(jsonResponse).getAsJsonArray();
                             JsonObject Friends = user.get(0).getAsJsonObject();

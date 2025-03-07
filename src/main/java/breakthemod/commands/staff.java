@@ -55,7 +55,7 @@ public class staff {
                             fetch Fetch = new fetch();
                             
                             // Fetch and parse the JSON
-                            String jsonResponse = Fetch.Fetch("https://raw.githubusercontent.com/jwkerr/staff/master/staff.json", null);
+                            String jsonResponse = Fetch.GetRequest("https://raw.githubusercontent.com/jwkerr/staff/master/staff.json");
                             JsonObject staffJson = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
                             // Extract all UUIDs into a single list

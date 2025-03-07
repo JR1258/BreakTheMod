@@ -34,6 +34,7 @@ public class fetch {
      * @param payload the JSON payload to include in the request body
      * @return the response body as Strings
      * @throws Exception It covers all possible exceptions
+     * @deprecated
      */
     public String Fetch(String url, String payload) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
@@ -46,6 +47,42 @@ public class fetch {
         } else {
             requestBuilder.GET();
         }
+
+        HttpRequest request = requestBuilder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response.body();
+    }
+
+    public String PostRequest(String url, String payload) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json");
+
+        if (payload != null) {
+            requestBuilder.POST(HttpRequest.BodyPublishers.ofString(payload));
+        } else {
+            requestBuilder.GET();
+        }
+
+        HttpRequest request = requestBuilder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response.body();
+    }
+
+    public String GetRequest(String url) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json");
+
+
+        requestBuilder.GET();
+
 
         HttpRequest request = requestBuilder.build();
 

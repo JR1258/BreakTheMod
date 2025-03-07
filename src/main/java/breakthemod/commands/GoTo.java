@@ -78,7 +78,7 @@ public class GoTo {
                     queryArray.add(query);
                     nearbyPayload.add("query", queryArray);
 
-                    String nearbyResponse = fetchInstance.Fetch("https://api.earthmc.net/v3/aurora/nearby", nearbyPayload.toString());
+                    String nearbyResponse = fetchInstance.PostRequest("https://api.earthmc.net/v3/aurora/nearby", nearbyPayload.toString());
                     JsonArray nearbyArray = JsonParser.parseString(nearbyResponse).getAsJsonArray().get(0).getAsJsonArray();
                     List<String> towns = new ArrayList<>();
 

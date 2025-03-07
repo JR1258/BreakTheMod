@@ -80,7 +80,7 @@ public class locate {
                                                     return;
                                                 }
 
-                                                JsonArray response = JsonParser.parseString(FetchInstance.Fetch(apiUrl, payload.toString())).getAsJsonArray();
+                                                JsonArray response = JsonParser.parseString(FetchInstance.PostRequest(apiUrl, payload.toString())).getAsJsonArray();
 
                                                 if (response.size() > 0) {
                                                     JsonObject coordinates = response.get(0).getAsJsonObject()

@@ -60,9 +60,8 @@ public class discord {
                         CompletableFuture.runAsync(() -> {
                             try {
                                 // Fetch Mojang data
-                                String mojangResponse = Fetch.Fetch(
-                                    "https://api.mojang.com/users/profiles/minecraft/" + username, 
-                                    null
+                                String mojangResponse = Fetch.GetRequest(
+                                    "https://api.mojang.com/users/profiles/minecraft/" + username
                                 );
                                 JsonObject mojangData = JsonParser.parseString(mojangResponse).getAsJsonObject();
                                 String minecraftUUID = mojangData.get("id").getAsString();
@@ -88,7 +87,7 @@ public class discord {
                                 payload.add("query", queryArray);
 
                                 // Fetch EarthMC data
-                                String emcResponse = Fetch.Fetch(
+                                String emcResponse = Fetch.PostRequest(
                                     "https://api.earthmc.net/v3/aurora/discord?query=", 
                                     payload.toString()
                                 );

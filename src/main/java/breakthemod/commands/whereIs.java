@@ -57,7 +57,7 @@ public class whereIs {
                                 throw new IllegalStateException("Minecraft client or world is null.");
                             }
 
-                            JsonObject response = JsonParser.parseString(Fetch.Fetch("https://map.earthmc.net/tiles/players.json", null)).getAsJsonObject();
+                            JsonObject response = JsonParser.parseString(Fetch.GetRequest("https://map.earthmc.net/tiles/players.json")).getAsJsonObject();
 
                             boolean found = false;
                             for (JsonElement User : response.get("players").getAsJsonArray()) {
