@@ -44,7 +44,7 @@ public class BreakTheMod implements ClientModInitializer {
         GoTo.register();
         help.register();
         friends.register();
-
+        nationpop.register();
         render Render = new render();
         // Dont think im gonna move to the new thing, too much work
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
