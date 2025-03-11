@@ -65,6 +65,7 @@ public class nationpop {
                JsonObject parsedResponse = JsonParser.parseString(response).getAsJsonArray().get(0).getAsJsonObject();
                int numResidents =  parsedResponse.get("stats").getAsJsonObject().get("numResidents").getAsInt();
                sendMessage(client, Text.literal(name + " nation has " + numResidents + " residents and a nation bonus of " + getNationBonus(numResidents)));
+
            }  catch (Exception e){
                LOGGER.error("Unexpected error encountered", e);
            }

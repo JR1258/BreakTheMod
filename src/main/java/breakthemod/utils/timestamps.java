@@ -24,7 +24,7 @@ import java.util.List;
 
 public class timestamps {
 
-    public List<Long> parseTimestamp(long timestamp){
+    public static List<Long> parseTimestamp(long timestamp){
         long current = Instant.now().toEpochMilli();
         long diff = current - timestamp;
         Duration duration = Duration.ofMillis(diff);

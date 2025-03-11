@@ -23,6 +23,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.text.*;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -166,6 +167,7 @@ public class nearby {
             }
         });
     }
+
 
     public static String getDirectionFromYaw(float yaw) {
         yaw = (yaw % 360 + 360) % 360; // Normalize yaw to [0, 360)

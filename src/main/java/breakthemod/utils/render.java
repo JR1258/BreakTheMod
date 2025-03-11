@@ -150,6 +150,11 @@ public class render {
      * Renders an overlay using DrawContext.
      */
     public void renderOverlay(DrawContext drawContext, MinecraftClient client) {
+        // Don't render if the HUD is hidden (F1 pressed)
+        if (client.options.hudHidden) {
+            return;
+        }
+
         if (client.world == null || client.player == null) {
             return;
         }
@@ -195,7 +200,6 @@ public class render {
             }
         }
 
-
         int textY = y + 5;
         synchronized (playerList) {
             for (String line : playerList) {
@@ -204,6 +208,7 @@ public class render {
             }
         }
     }
+
 
 
 }
