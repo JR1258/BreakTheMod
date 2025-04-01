@@ -35,15 +35,18 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CompletableFuture;
 
 
-public class nationpop {
+public class nationpop extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register() {
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(
                     LiteralArgumentBuilder.<FabricClientCommandSource>literal("nationpop")
                             .then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.string())
                                     .executes(context -> {
+                                        if (getEnabledOnOtherServers()) return 0;
+
                                         String name = StringArgumentType.getString(context, "name");
                                         return handleNationPop(name, MinecraftClient.getInstance());
 

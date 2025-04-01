@@ -33,9 +33,11 @@ import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-public class townless {
+public class townless extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
-    public static void register() {
+
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("townless")
@@ -47,6 +49,8 @@ public class townless {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
+                    if (getEnabledOnOtherServers()) return 0;
+
                     CompletableFuture.runAsync(() -> {
                         try {
                             List<String> players = new ArrayList<>();
@@ -175,7 +179,7 @@ public class townless {
             template.addProperty("status", true);
             payload.add("template", template);
 
-            String response = new fetch().Fetch("https://api.earthmc.net/v3/aurora/players", payload.toString());
+            String response = new fetch().PostRequest("https://api.earthmc.net/v3/aurora/players", payload.toString());
             JsonArray jsonArray = JsonParser.parseString(response).getAsJsonArray();
 
             for (JsonElement user : jsonArray) {

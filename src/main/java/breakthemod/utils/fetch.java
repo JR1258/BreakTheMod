@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class fetch {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
-    
+
     /**
      * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a [String].
      * @param url the URL to send the request to
@@ -42,50 +42,51 @@ public class fetch {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json");
-
         if (payload != null) {
             requestBuilder.POST(HttpRequest.BodyPublishers.ofString(payload));
         } else {
             requestBuilder.GET();
         }
-
         HttpRequest request = requestBuilder.build();
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         return response.body();
     }
 
+    /**
+     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a [String].
+     * @param url the URL to send the request to
+     * @param payload the JSON payload to include in the request body
+     * @return the response body as Strings
+     * @throws Exception It covers all possible exceptions
+     */
     public String PostRequest(String url, String payload) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json");
-
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString(payload));
-
-
         HttpRequest request = requestBuilder.build();
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         return response.body();
     }
 
+    /**
+     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a [String].
+     * @param url the URL to send the request to
+     * @return the response body as Strings
+     * @throws Exception It covers all possible exceptions
+     */
     public String GetRequest(String url) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json");
-
-
         requestBuilder.GET();
-
-
         HttpRequest request = requestBuilder.build();
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         return response.body();
     }
+
+
+
 }

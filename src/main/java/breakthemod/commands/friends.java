@@ -33,15 +33,18 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import java.util.*;
 
-public class friends {
+public class friends extends  Command{
 
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register() {
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("onlinefriends")
                 .executes(context -> {
+                    if (getEnabledOnOtherServers()) return 0;
+
                     MinecraftClient client = MinecraftClient.getInstance();
 
                     if (client.player == null) {

@@ -30,23 +30,34 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class config {
-    // Static fields for widget settings
-    public static WidgetPosition widgetPosition = WidgetPosition.TOP_LEFT;
-    public static int customX = 0;
-    public static int customY = 0;
-    public static boolean radarEnabled = true;
+    // Singleton instance
+    private static config instance;
 
-    // Config file and Gson instance for saving/loading settings
+    // Widget settings (now instance variables)
+    private WidgetPosition widgetPosition = WidgetPosition.TOP_LEFT;
+    private int customX = 0;
+    private int customY = 0;
+    private boolean radarEnabled = true;
+    private boolean enabledOnOtherServers = false;
+
+    // Config file handling
     private static final File configFile = new File(MinecraftClient.getInstance().runDirectory, "config/breakthemod_config.json");
     private static final Gson gson = new Gson();
 
-    public config() { loadConfig(); }
-    // Method to create the config screen
-    public Screen widget(Screen parent) {
-        // Load the saved configuration before creating the screen
+    // Private constructor
+    private config() {
         loadConfig();
+    }
 
-        // Create the configuration builder
+    // Singleton accessor
+    public static config getInstance() {
+        if (instance == null) {
+            instance = new config();
+        }
+        return instance;
+    }
+
+    public Screen createConfigScreen(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Text.translatable("BreakTheMod"));
@@ -54,11 +65,20 @@ public class config {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
         ConfigCategory general = builder.getOrCreateCategory(Text.literal("BreakTheMod config"));
 
-        // Add a dropdown for predefined positions
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Text.literal("Enable BreakTheMod on other servers"),
+                        enabledOnOtherServers)
+                .setSaveConsumer(enabled -> {
+                    enabledOnOtherServers = enabled;
+                    saveConfig();
+                })
+                .build()
+        );
+
         general.addEntry(entryBuilder.startEnumSelector(
                         Text.literal("Widget Position"),
                         WidgetPosition.class,
-                        widgetPosition // Default value from static variable
+                        widgetPosition
                 )
                 .setSaveConsumer(position -> {
                     setWidgetPosition(position);
@@ -66,36 +86,34 @@ public class config {
                 })
                 .build());
 
-        // Add sliders for custom X and Y positions
         general.addEntry(entryBuilder.startIntField(
                         Text.literal("Custom X Position"),
-                        customX // Default value from static variable
+                        customX
                 )
                 .setSaveConsumer(x -> {
                     setCustomX(x);
                     saveConfig();
                 })
                 .setMin(0)
-                .setMax(MinecraftClient.getInstance().currentScreen.width) // Max value for screen width (adjust if needed)
+                .setMax(MinecraftClient.getInstance().currentScreen.width)
                 .build());
 
         general.addEntry(entryBuilder.startIntField(
-                        Text.literal("Custom Y Position"),
-                        customY // Default value from static variable
-                )
-                .setSaveConsumer(y -> {
-                    setCustomY(y);
-                    saveConfig();
-                })
-                .setMin(0)
-                .setMax(MinecraftClient.getInstance().currentScreen.height) // Max value for screen height (adjust if needed)
-                .build()
-
+                                Text.literal("Custom Y Position"),
+                                customY
+                        )
+                        .setSaveConsumer(y -> {
+                            setCustomY(y);
+                            saveConfig();
+                        })
+                        .setMin(0)
+                        .setMax(MinecraftClient.getInstance().currentScreen.height)
+                        .build()
         );
 
         general.addEntry(entryBuilder.startBooleanToggle(
-                Text.literal("Player radar"),
-                radarEnabled)
+                        Text.literal("Player radar"),
+                        radarEnabled)
                 .setSaveConsumer(enabled -> {
                     radarEnabled = enabled;
                     saveConfig();
@@ -103,12 +121,9 @@ public class config {
                 .build()
         );
 
-      ;
-
         return builder.build();
     }
 
-    // Enum for predefined widget positions
     public enum WidgetPosition {
         TOP_LEFT,
         TOP_RIGHT,
@@ -117,29 +132,29 @@ public class config {
         CUSTOM
     }
 
-    // getters and setters
-    public WidgetPosition getWidgetPosition() {return widgetPosition;}
+    // Getters and setters
+    public WidgetPosition getWidgetPosition() { return widgetPosition; }
+    public void setWidgetPosition(WidgetPosition position) { widgetPosition = position; }
 
-    public void setWidgetPosition(WidgetPosition position) {widgetPosition = position;}
+    public int getCustomX() { return customX; }
+    public void setCustomX(int x) { customX = x; }
 
-    public int getCustomX() {return customX;}
+    public int getCustomY() { return customY; }
+    public void setCustomY(int y) { customY = y; }
 
-    public void setCustomX(int x) {customX = x;}
+    public boolean getRadarEnabled() { return radarEnabled; }
+    public void setRadarEnabled(boolean enabled) { radarEnabled = enabled; }
 
-    public int getCustomY() {return customY;}
+    public boolean isEnabledOnOtherServers() { return enabledOnOtherServers; }
+    public void setEnabledOnOtherServers(boolean enabled) { enabledOnOtherServers = enabled; }
 
-    public void setCustomY(int y) {customY = y;}
-
-    public boolean getRadarEnabled(){return radarEnabled;}
-    // Save configuration to file
     public void saveConfig() {
         JsonObject configJson = new JsonObject();
-
         configJson.addProperty("widgetPosition", widgetPosition.name());
-
         configJson.addProperty("customX", customX);
         configJson.addProperty("customY", customY);
-        configJson.addProperty("radarEnabled",radarEnabled);
+        configJson.addProperty("radarEnabled", radarEnabled);
+        configJson.addProperty("enabledOnOtherServers", enabledOnOtherServers);
 
         try (FileWriter writer = new FileWriter(configFile)) {
             gson.toJson(configJson, writer);
@@ -148,20 +163,18 @@ public class config {
         }
     }
 
-    // Load configuration from file
-    public void loadConfig() {
+    private void loadConfig() {
         if (configFile.exists()) {
             try (FileReader reader = new FileReader(configFile)) {
                 JsonObject configJson = gson.fromJson(reader, JsonObject.class);
-                String position = configJson.get("widgetPosition").getAsString();
-                widgetPosition = WidgetPosition.valueOf(position);
+                widgetPosition = WidgetPosition.valueOf(configJson.get("widgetPosition").getAsString());
                 customX = configJson.get("customX").getAsInt();
                 customY = configJson.get("customY").getAsInt();
                 radarEnabled = configJson.get("radarEnabled").getAsBoolean();
+                enabledOnOtherServers = configJson.get("enabledOnOtherServers").getAsBoolean();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
 }

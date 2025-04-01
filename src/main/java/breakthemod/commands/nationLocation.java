@@ -38,16 +38,19 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-public class nationLocation {
+public class nationLocation extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register(){
+    @Override
+    public void register(){
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                     .<FabricClientCommandSource>literal("nationLocation")
                     .then(RequiredArgumentBuilder
                             .<FabricClientCommandSource, String>argument("nation", StringArgumentType.string())
                             .executes(context -> {
+                                if (getEnabledOnOtherServers()) return 0;
+
                                 handleNationLocation(StringArgumentType.getString(context, "nation"), MinecraftClient.getInstance());
                                 return 0;
                             })

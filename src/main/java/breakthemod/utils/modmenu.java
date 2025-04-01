@@ -24,6 +24,6 @@ public class modmenu implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> new config().widget(parent);
+        return parent -> config.getInstance().createConfigScreen(parent);
     }
 }

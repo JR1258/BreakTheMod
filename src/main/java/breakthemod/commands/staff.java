@@ -33,11 +33,12 @@ import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-public class staff {
+public class staff extends Command {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register() {
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("onlinestaff")
@@ -48,6 +49,7 @@ public class staff {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
+                    if (getEnabledOnOtherServers()) return 0;
 
                     // Run the network request asynchronously to avoid freezing the game
                     CompletableFuture.runAsync(() -> {

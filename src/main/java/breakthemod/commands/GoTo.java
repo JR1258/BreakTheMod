@@ -37,15 +37,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class GoTo {
+public class GoTo extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register() {
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(
                 LiteralArgumentBuilder.<FabricClientCommandSource>literal("goto")
                     .then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.string())
                         .executes(context -> {
+                            if (getEnabledOnOtherServers()) return 0;
+
                             String name = StringArgumentType.getString(context, "name");
                             return handleGoToCommand(name, MinecraftClient.getInstance());
                         })

@@ -159,7 +159,7 @@ public class render {
             return;
         }
 
-        config Config = new config();
+        config Config = config.getInstance();
 
         if (!Config.getRadarEnabled()) return;
 

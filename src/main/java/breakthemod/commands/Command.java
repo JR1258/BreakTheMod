@@ -14,10 +14,46 @@
  * You should have received a copy of the GNU General Public License
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 package breakthemod.commands;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ServerInfo;
+import breakthemod.utils.config;
+
+public abstract class Command{
+    public abstract void register();
 
 
+    private static String getConnectedServerAddress() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null) return null;
 
-public class Command {
+        ServerInfo serverInfo = client.getCurrentServerEntry();
+        if (serverInfo == null) return null;
+
+        String serverAddress = serverInfo.address;
+
+        if (serverAddress.contains(":")) {
+            serverAddress = serverAddress.split(":")[0];
+        }
+        return serverAddress;
+    }
+
+    public static Boolean getEnabledOnOtherServers() {
+        String serverAddress = getConnectedServerAddress();
+
+        if (serverAddress == null) {
+            return true;
+        }
+
+        String[] addressParts = serverAddress.split("\\.");
+
+        if (addressParts.length >= 3
+                && addressParts[addressParts.length - 2].equals("earthmc")
+                && addressParts[addressParts.length - 1].equals("net")) {
+            return true;
+        }
+
+        return config.getInstance().isEnabledOnOtherServers();
+    }
 }

@@ -34,10 +34,11 @@ import java.util.concurrent.CompletableFuture;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 
 
-public class coords {
+public class coords extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register() {
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("coords")
@@ -46,6 +47,8 @@ public class coords {
                     .then(RequiredArgumentBuilder
                         .<FabricClientCommandSource, Double>argument("z", DoubleArgumentType.doubleArg())
                         .executes(context -> {
+                            if (getEnabledOnOtherServers()) return 0;
+
                             double x = DoubleArgumentType.getDouble(context, "x");
                             double z = DoubleArgumentType.getDouble(context, "z");
                             MinecraftClient client = MinecraftClient.getInstance();

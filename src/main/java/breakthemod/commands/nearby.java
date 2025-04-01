@@ -37,15 +37,17 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.Vec3d;
 import breakthemod.utils.Prefix;
 
-public class nearby {
+public class nearby extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
-    public static void register() {
+    @Override
+    public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("nearby")
                 .executes(context -> {
                     MinecraftClient client = MinecraftClient.getInstance();
+                    if (getEnabledOnOtherServers()) return 0;
 
                     if (client.player == null) {
                         LOGGER.error("Player instance is null, cannot send feedback.");
