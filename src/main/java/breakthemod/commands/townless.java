@@ -42,7 +42,8 @@ public class townless extends Command {
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("townless")
                 .executes(context -> {
-                    
+                    if (!getEnabledOnOtherServers()) return 0;
+
                     MinecraftClient client = MinecraftClient.getInstance();
 
                     if (client.player == null) {

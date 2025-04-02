@@ -47,7 +47,7 @@ public class nearby extends Command {
                 .<FabricClientCommandSource>literal("nearby")
                 .executes(context -> {
                     MinecraftClient client = MinecraftClient.getInstance();
-                    if (getEnabledOnOtherServers()) return 0;
+                    if (!getEnabledOnOtherServers()) return 0;
 
                     if (client.player == null) {
                         LOGGER.error("Player instance is null, cannot send feedback.");

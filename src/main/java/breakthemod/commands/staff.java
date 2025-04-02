@@ -44,6 +44,7 @@ public class staff extends Command {
                 .<FabricClientCommandSource>literal("onlinestaff")
                 .executes(context -> {
                     MinecraftClient client = MinecraftClient.getInstance();
+                    if (!getEnabledOnOtherServers()) return 0;
 
                     if (client.player == null) {
                         LOGGER.error("Player instance is null, cannot send feedback.");

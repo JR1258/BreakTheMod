@@ -47,7 +47,7 @@ public class GoTo extends Command {
                 LiteralArgumentBuilder.<FabricClientCommandSource>literal("goto")
                     .then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.string())
                         .executes(context -> {
-                            if (getEnabledOnOtherServers()) return 0;
+                            if (!getEnabledOnOtherServers()) return 0;
 
                             String name = StringArgumentType.getString(context, "name");
                             return handleGoToCommand(name, MinecraftClient.getInstance());

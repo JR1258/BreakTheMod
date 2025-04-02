@@ -43,7 +43,7 @@ public class friends extends  Command{
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("onlinefriends")
                 .executes(context -> {
-                    if (getEnabledOnOtherServers()) return 0;
+                    if (!getEnabledOnOtherServers()) return 0;
 
                     MinecraftClient client = MinecraftClient.getInstance();
 

@@ -51,7 +51,7 @@ public class whereIs extends Command {
                         return 0;
                     }
 
-                    if (getEnabledOnOtherServers()) return 0;
+                    if (!getEnabledOnOtherServers()) return 0;
 
                     CompletableFuture.runAsync(() -> {
                         try {

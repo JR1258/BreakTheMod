@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import breakthemod.utils.config.WidgetPosition;
 import java.util.*;
-import breakthemod.commands.nearby;
+import breakthemod.commands.Command;
 
 public class render {
 
@@ -162,7 +162,8 @@ public class render {
         config Config = config.getInstance();
 
         if (!Config.getRadarEnabled()) return;
-
+        if (!Command.getEnabledOnOtherServers()) return;
+        
         widgetPosition = Config.getWidgetPosition();
         updateNearbyPlayers(client);
 

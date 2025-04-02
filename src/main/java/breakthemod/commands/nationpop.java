@@ -45,7 +45,7 @@ public class nationpop extends Command {
                     LiteralArgumentBuilder.<FabricClientCommandSource>literal("nationpop")
                             .then(RequiredArgumentBuilder.<FabricClientCommandSource, String>argument("name", StringArgumentType.string())
                                     .executes(context -> {
-                                        if (getEnabledOnOtherServers()) return 0;
+                                        if (!getEnabledOnOtherServers()) return 0;
 
                                         String name = StringArgumentType.getString(context, "name");
                                         return handleNationPop(name, MinecraftClient.getInstance());

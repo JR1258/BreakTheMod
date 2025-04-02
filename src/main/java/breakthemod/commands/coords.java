@@ -47,7 +47,7 @@ public class coords extends Command {
                     .then(RequiredArgumentBuilder
                         .<FabricClientCommandSource, Double>argument("z", DoubleArgumentType.doubleArg())
                         .executes(context -> {
-                            if (getEnabledOnOtherServers()) return 0;
+                            if (!getEnabledOnOtherServers()) return 0;
 
                             double x = DoubleArgumentType.getDouble(context, "x");
                             double z = DoubleArgumentType.getDouble(context, "z");

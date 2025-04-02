@@ -46,7 +46,7 @@ public class lastSeen extends Command {
                 .then(RequiredArgumentBuilder
                     .<FabricClientCommandSource, String>argument("username", StringArgumentType.string())
                     .executes(context -> {
-                        if (getEnabledOnOtherServers()) return 0;
+                        if (!getEnabledOnOtherServers()) return 0;
 
                         String username = StringArgumentType.getString(context, "username");
                         MinecraftClient client = MinecraftClient.getInstance();

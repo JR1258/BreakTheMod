@@ -49,7 +49,7 @@ public class nationLocation extends Command {
                     .then(RequiredArgumentBuilder
                             .<FabricClientCommandSource, String>argument("nation", StringArgumentType.string())
                             .executes(context -> {
-                                if (getEnabledOnOtherServers()) return 0;
+                                if (!getEnabledOnOtherServers()) return 0;
 
                                 handleNationLocation(StringArgumentType.getString(context, "nation"), MinecraftClient.getInstance());
                                 return 0;

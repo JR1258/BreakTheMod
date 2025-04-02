@@ -47,7 +47,7 @@ public class locate extends  Command {
                             .then(RequiredArgumentBuilder
                                     .<FabricClientCommandSource, String>argument("type", StringArgumentType.word())
                                     .executes(context -> {
-                                        if (getEnabledOnOtherServers()) return 0;
+                                        if (!getEnabledOnOtherServers()) return 0;
 
                                         String name = StringArgumentType.getString(context, "name");
                                         String type = StringArgumentType.getString(context, "type").toLowerCase();
