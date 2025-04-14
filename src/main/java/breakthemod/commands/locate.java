@@ -122,13 +122,5 @@ public class locate extends  Command {
         });
     }
 
-    private static void sendMessage(MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
+   
 }

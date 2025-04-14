@@ -57,7 +57,7 @@ public class GoTo extends Command {
         });
     }
 
-    private static int handleGoToCommand(String townName, MinecraftClient client) {
+    private int handleGoToCommand(String townName, MinecraftClient client) {
         if (client.player == null) {
             LOGGER.error("Player instance is null, cannot send feedback.");
             return 0;
@@ -156,13 +156,4 @@ public class GoTo extends Command {
         return 1;
     }
 
-    private static void sendMessage(@NotNull MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
 }

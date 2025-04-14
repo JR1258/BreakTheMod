@@ -50,7 +50,6 @@ public class staff extends Command {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
-                    if (getEnabledOnOtherServers()) return 0;
 
                     // Run the network request asynchronously to avoid freezing the game
                     CompletableFuture.runAsync(() -> {
@@ -107,13 +106,5 @@ public class staff extends Command {
         });
     }
 
-    private static void sendMessage(MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
+
 }

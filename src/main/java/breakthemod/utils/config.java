@@ -39,11 +39,10 @@ public class config {
     private int customY = 0;
     private boolean radarEnabled = true;
     private boolean enabledOnOtherServers = false;
-
     // Config file handling
     private static final File configFile = new File(MinecraftClient.getInstance().runDirectory, "config/breakthemod_config.json");
     private static final Gson gson = new Gson();
-
+    private static Boolean dev = false;
     // Private constructor
     private config() {
         loadConfig();
@@ -121,6 +120,16 @@ public class config {
                 .build()
         );
 
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Text.literal("dev"),
+                        dev)
+                .setSaveConsumer(enabled -> {
+                    dev = enabled;
+                    saveConfig();
+                })
+                .build()
+        );
         return builder.build();
     }
 
@@ -148,6 +157,9 @@ public class config {
     public boolean isEnabledOnOtherServers() { return enabledOnOtherServers; }
     public void setEnabledOnOtherServers(boolean enabled) { enabledOnOtherServers = enabled; }
 
+    public boolean isDev() { return dev;}
+    public void setDev(boolean bl) { dev = bl; }
+
     public void saveConfig() {
         JsonObject configJson = new JsonObject();
         configJson.addProperty("widgetPosition", widgetPosition.name());
@@ -155,7 +167,7 @@ public class config {
         configJson.addProperty("customY", customY);
         configJson.addProperty("radarEnabled", radarEnabled);
         configJson.addProperty("enabledOnOtherServers", enabledOnOtherServers);
-
+        configJson.addProperty("dev", dev);
         try (FileWriter writer = new FileWriter(configFile)) {
             gson.toJson(configJson, writer);
         } catch (IOException e) {
@@ -167,11 +179,14 @@ public class config {
         if (configFile.exists()) {
             try (FileReader reader = new FileReader(configFile)) {
                 JsonObject configJson = gson.fromJson(reader, JsonObject.class);
-                widgetPosition = WidgetPosition.valueOf(configJson.get("widgetPosition").getAsString());
-                customX = configJson.get("customX").getAsInt();
-                customY = configJson.get("customY").getAsInt();
-                radarEnabled = configJson.get("radarEnabled").getAsBoolean();
-                enabledOnOtherServers = configJson.get("enabledOnOtherServers").getAsBoolean();
+                widgetPosition = configJson.has("widgetPosition")
+                        ? WidgetPosition.valueOf(configJson.get("widgetPosition").getAsString())
+                        : WidgetPosition.TOP_LEFT;
+                customX = configJson.has("customX") ? configJson.get("customX").getAsInt() : 0;
+                customY = configJson.has("customY") ? configJson.get("customY").getAsInt() : 0;
+                radarEnabled = !configJson.has("radarEnabled") || configJson.get("radarEnabled").getAsBoolean();
+                enabledOnOtherServers = configJson.has("enabledOnOtherServers") && configJson.get("enabledOnOtherServers").getAsBoolean();
+                dev = configJson.has("dev") ? configJson.get("dev").getAsBoolean() : dev;
             } catch (IOException e) {
                 e.printStackTrace();
             }

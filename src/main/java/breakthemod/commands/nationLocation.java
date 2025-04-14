@@ -59,15 +59,7 @@ public class nationLocation extends Command {
         });
     }
 
-    private static void sendMessage(MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
+   
 
     // A simple helper class to hold player data including coordinates.
     public static class PlayerData {
@@ -89,7 +81,7 @@ public class nationLocation extends Command {
         }
     }
 
-    public static void handleNationLocation(String nation, @NotNull MinecraftClient client){
+    public void handleNationLocation(String nation, @NotNull MinecraftClient client){
         CompletableFuture.runAsync(() -> {
             try {
                 fetch FetchInstance = new fetch();

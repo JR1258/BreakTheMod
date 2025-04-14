@@ -50,7 +50,6 @@ public class townless extends Command {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
-                    if (getEnabledOnOtherServers()) return 0;
 
                     CompletableFuture.runAsync(() -> {
                         try {
@@ -149,15 +148,7 @@ public class townless extends Command {
         });
     }
 
-    private static void sendMessage(MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
+   
     
     /**
      * Builds a JsonArray from a List of strings.

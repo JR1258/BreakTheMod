@@ -17,12 +17,17 @@
 package breakthemod;
 
 import breakthemod.commands.*;
+import breakthemod.commands.economy.calculateGold;
+import breakthemod.commands.economy.calculateStacks;
 import breakthemod.utils.*;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class BreakTheMod implements ClientModInitializer {
 
@@ -46,7 +51,9 @@ public class BreakTheMod implements ClientModInitializer {
                 new lastSeen(),
                 new help(),
                 new nearby(),
-                new locate()
+                new locate(),
+                new calculateGold(),
+                new calculateStacks()
         );
         render Render = new render();
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {

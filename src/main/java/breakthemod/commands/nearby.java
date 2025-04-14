@@ -47,13 +47,15 @@ public class nearby extends Command {
                 .<FabricClientCommandSource>literal("nearby")
                 .executes(context -> {
                     MinecraftClient client = MinecraftClient.getInstance();
-                    if (!getEnabledOnOtherServers()) return 0;
+                    if (!getEnabledOnOtherServers()) {
+                        return 1;
+                    };
 
                     if (client.player == null) {
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
-                    nearby.nearby(client);
+                    nearby(client);
                    return 1;
                 });
 
@@ -80,7 +82,7 @@ public class nearby extends Command {
         return player.isSneaking();
     }
 
-    public static void nearby(MinecraftClient client){
+    public void nearby(MinecraftClient client){
         CompletableFuture.runAsync(() -> {
             try {
                 List<String> playerInfoList = new ArrayList<>();
@@ -160,15 +162,7 @@ public class nearby extends Command {
         });
     }
 
-    private static void sendMessage(MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
+   
 
 
     public static String getDirectionFromYaw(float yaw) {

@@ -43,7 +43,6 @@ public class friends extends  Command{
             LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
                 .<FabricClientCommandSource>literal("onlinefriends")
                 .executes(context -> {
-                    if (!getEnabledOnOtherServers()) return 0;
 
                     MinecraftClient client = MinecraftClient.getInstance();
 
@@ -51,6 +50,7 @@ public class friends extends  Command{
                         LOGGER.error("Player instance is null, cannot send feedback.");
                         return 0;
                     }
+                    if (!getEnabledOnOtherServers()) return 0;
 
                     CompletableFuture.runAsync(() -> {
                         try {
@@ -115,13 +115,5 @@ public class friends extends  Command{
                 
     }
 
-    private static void sendMessage(MinecraftClient client, Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                Text prefix = Prefix.getPrefix();
-                Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
-    }
+   
 }

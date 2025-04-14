@@ -16,9 +16,11 @@
  */
 
 package breakthemod.commands;
+import breakthemod.utils.Prefix;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import breakthemod.utils.config;
+import net.minecraft.text.Text;
 
 public abstract class Command{
     public abstract void register();
@@ -31,29 +33,26 @@ public abstract class Command{
         ServerInfo serverInfo = client.getCurrentServerEntry();
         if (serverInfo == null) return null;
 
-        String serverAddress = serverInfo.address;
-
-        if (serverAddress.contains(":")) {
-            serverAddress = serverAddress.split(":")[0];
-        }
-        return serverAddress;
+        return serverInfo.address.split(",")[0];
     }
 
     public static Boolean getEnabledOnOtherServers() {
         String serverAddress = getConnectedServerAddress();
 
-        if (serverAddress == null) {
-            return true;
-        }
+        if (serverAddress == null) {return true;}
 
-        String[] addressParts = serverAddress.split("\\.");
-
-        if (addressParts.length >= 3
-                && addressParts[addressParts.length - 2].equals("earthmc")
-                && addressParts[addressParts.length - 1].equals("net")) {
-            return true;
-        }
+        if (serverAddress.toLowerCase().endsWith("earthmc.net")) return true;
 
         return config.getInstance().isEnabledOnOtherServers();
+    }
+
+    public void sendMessage(MinecraftClient client, Text message) {
+        client.execute(() -> {
+            if (client.player != null) {
+                Text prefix = Prefix.getPrefix();
+                Text chatMessage = Text.literal("").append(prefix).append(message);
+                client.player.sendMessage(chatMessage, false);
+            }
+        });
     }
 }

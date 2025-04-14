@@ -56,7 +56,7 @@ public class nationpop extends Command {
         });
     }
 
-    public static int handleNationPop(String name, @NotNull MinecraftClient client){
+    public int handleNationPop(String name, @NotNull MinecraftClient client){
         CompletableFuture.runAsync(() -> {
            try {
 
@@ -74,16 +74,6 @@ public class nationpop extends Command {
            }
         });
         return 0;
-    }
-
-    private static void sendMessage(@NotNull MinecraftClient client, net.minecraft.text.Text message) {
-        client.execute(() -> {
-            if (client.player != null) {
-                net.minecraft.text.Text prefix = Prefix.getPrefix();
-                net.minecraft.text.Text chatMessage = Text.literal("").append(prefix).append(message);
-                client.player.sendMessage(chatMessage, false);
-            }
-        });
     }
 
     public static int getNationBonus(int residentAmt) {

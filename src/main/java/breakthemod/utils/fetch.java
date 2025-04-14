@@ -21,6 +21,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.WebSocket;
+import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +33,10 @@ public class fetch {
     private static final Logger LOGGER = LoggerFactory.getLogger("breakthemod");
 
     /**
-     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a [String].
+     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a String.
      * @param url the URL to send the request to
      * @param payload the JSON payload to include in the request body
-     * @return the response body as Strings
+     * @return the response body as a String
      * @throws Exception It covers all possible exceptions
      * @deprecated
      */
@@ -53,10 +57,10 @@ public class fetch {
     }
 
     /**
-     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a [String].
+     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a String.
      * @param url the URL to send the request to
      * @param payload the JSON payload to include in the request body
-     * @return the response body as Strings
+     * @return the response body as a String
      * @throws Exception It covers all possible exceptions
      */
     public String PostRequest(String url, String payload) throws Exception {
@@ -70,10 +74,12 @@ public class fetch {
         return response.body();
     }
 
+
+
     /**
-     * Sends an HTTP POST request with the provided URL and JSON payload and returns the response as a [String].
+     * Sends an HTTP GET request to the provided URL and returns the response as a String.
      * @param url the URL to send the request to
-     * @return the response body as Strings
+     * @return the response body as a String
      * @throws Exception It covers all possible exceptions
      */
     public String GetRequest(String url) throws Exception {
@@ -86,6 +92,9 @@ public class fetch {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return response.body();
     }
+
+
+
 
 
 

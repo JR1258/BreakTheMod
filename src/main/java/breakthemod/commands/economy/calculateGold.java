@@ -14,10 +14,43 @@
  * You should have received a copy of the GNU General Public License
  * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 package breakthemod.commands.economy;
 
+import breakthemod.commands.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 
+public class calculateGold extends Command {
+    @Override
+    public void register() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            LiteralArgumentBuilder<FabricClientCommandSource> command = LiteralArgumentBuilder
+                    .<FabricClientCommandSource>literal("calculateGold")
+                    .then(RequiredArgumentBuilder
+                            .<FabricClientCommandSource, Integer>argument("ingots", IntegerArgumentType.integer())
+                            .executes(context -> {
+                                MinecraftClient client = MinecraftClient.getInstance();
+                                if (!getEnabledOnOtherServers()) return 0;
+                                int ingots = IntegerArgumentType.getInteger(context, "ingots");
 
-public class calculateGold {
+                                int fullBlocks = ingots / 9;
+                                int remainder = ingots % 9;
+
+                                String message = ingots + " gold ingots equal "
+                                        + fullBlocks + " blocks and " + remainder + " ingots";
+
+                                client.execute(() -> sendMessage(client, Text.literal(message)));
+                                return 1;
+                            })
+                    );
+
+            dispatcher.register(command);
+        });
+    }
 }
