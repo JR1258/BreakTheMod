@@ -24,10 +24,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 
 public class BreakTheMod implements ClientModInitializer {
 
@@ -59,7 +59,6 @@ public class BreakTheMod implements ClientModInitializer {
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
             Render.renderOverlay(drawContext, MinecraftClient.getInstance());
         });
-
     }
 
     public void registerCommands(Command ...commands){

@@ -43,6 +43,7 @@ public class config {
     private static final File configFile = new File(MinecraftClient.getInstance().runDirectory, "config/breakthemod_config.json");
     private static final Gson gson = new Gson();
     private static Boolean dev = false;
+    private static Boolean towny = false;
     // Private constructor
     private config() {
         loadConfig();
@@ -130,6 +131,16 @@ public class config {
                 })
                 .build()
         );
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Text.literal("TownyHud"),
+                        towny)
+                .setSaveConsumer(enabled -> {
+                    towny = enabled;
+                    saveConfig();
+                })
+                .build()
+        );
         return builder.build();
     }
 
@@ -160,6 +171,9 @@ public class config {
     public boolean isDev() { return dev;}
     public void setDev(boolean bl) { dev = bl; }
 
+    public boolean isTowny() { return towny;}
+    public void setTowny(boolean bl) { towny = bl;}
+
     public void saveConfig() {
         JsonObject configJson = new JsonObject();
         configJson.addProperty("widgetPosition", widgetPosition.name());
@@ -168,6 +182,7 @@ public class config {
         configJson.addProperty("radarEnabled", radarEnabled);
         configJson.addProperty("enabledOnOtherServers", enabledOnOtherServers);
         configJson.addProperty("dev", dev);
+        configJson.addProperty("towny", towny);
         try (FileWriter writer = new FileWriter(configFile)) {
             gson.toJson(configJson, writer);
         } catch (IOException e) {
@@ -187,6 +202,7 @@ public class config {
                 radarEnabled = !configJson.has("radarEnabled") || configJson.get("radarEnabled").getAsBoolean();
                 enabledOnOtherServers = configJson.has("enabledOnOtherServers") && configJson.get("enabledOnOtherServers").getAsBoolean();
                 dev = configJson.has("dev") ? configJson.get("dev").getAsBoolean() : dev;
+                towny = configJson.has("towny") ? configJson.get("dev").getAsBoolean() : towny;
             } catch (IOException e) {
                 e.printStackTrace();
             }

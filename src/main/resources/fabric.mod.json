@@ -12,7 +12,7 @@
 		"author": "https://github.com/chariskar",
 		"discord": "https://discord.gg/RVkwSrPyuq"
 	},
-	"license": "GPLV3",
+	"license": "GPL3",
 	"icon": "assets/icon.png",
 	"environment": "client",
 	"custom": {
@@ -35,10 +35,10 @@
 		]
 	},
 	"depends": {
-		"fabricloader": ">=0.16.5",
+		"fabricloader": ">=0.16.10",
 		"minecraft": ">=1.21.1",
 		"java": ">=17",
-		"fabric-api": ">=0.97.2+1.20.4",
+		"fabric-api": ">=0.117.0+1.21.4",
 		"cloth-config2": ">=17.0.144",
 		"modmenu": ">=13.0.2"
 	}

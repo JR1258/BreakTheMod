@@ -46,6 +46,8 @@ public abstract class Command{
         return config.getInstance().isEnabledOnOtherServers();
     }
 
+
+
     public void sendMessage(MinecraftClient client, Text message) {
         client.execute(() -> {
             if (client.player != null) {
