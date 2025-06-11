@@ -5,24 +5,35 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * BreakTheMod is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with BreakTheMod. If not, see <https://www.gnu.org/licenses/>.
  */
 package breakthemod.utils;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import breakthemod.utils.fetch;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonArray;
-import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerNameTagRenderer {
     private static final Map<String, PlayerTownInfo> playerInfoCache = new ConcurrentHashMap<>();
@@ -39,7 +50,7 @@ public class PlayerNameTagRenderer {
         }
     }
     
-    public static void renderPlayerNameTags(PoseStack matrices, VertexConsumerProvider vertexConsumers, Camera camera) {
+    public static void renderPlayerNameTags(MatrixStack matrices, VertexConsumerProvider vertexConsumers, Camera camera) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world == null || client.player == null) return;
         
@@ -59,7 +70,7 @@ public class PlayerNameTagRenderer {
         }
     }
     
-    private static void renderPlayerInfo(PoseStack matrices, VertexConsumerProvider vertexConsumers, 
+    private static void renderPlayerInfo(MatrixStack matrices, VertexConsumerProvider vertexConsumers, 
                                        PlayerEntity player, Camera camera, double distance) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
@@ -87,7 +98,7 @@ public class PlayerNameTagRenderer {
         
         // Render town info
         if (info != null && info.town != null && !info.town.isEmpty()) {
-            String townText = "§b" + info.town; // Light blue color
+            Text townText = Text.literal("§b" + info.town); // Light blue color
             int townWidth = textRenderer.getWidth(townText);
             textRenderer.draw(townText, -townWidth / 2f, yOffset, 0xFFFFFF, false, 
                             matrix, vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0, 0xF000F0);
@@ -96,7 +107,7 @@ public class PlayerNameTagRenderer {
         
         // Render nation info
         if (info != null && info.nation != null && !info.nation.isEmpty()) {
-            String nationText = "§e" + info.nation; // Yellow color
+            Text nationText = Text.literal("§e" + info.nation); // Yellow color
             int nationWidth = textRenderer.getWidth(nationText);
             textRenderer.draw(nationText, -nationWidth / 2f, yOffset, 0xFFFFFF, false,
                             matrix, vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0, 0xF000F0);
@@ -119,7 +130,7 @@ public class PlayerNameTagRenderer {
             if (player == client.player) continue;
             
             String playerName = player.getName().getString();
-            fetchPlayerTownInfo(playerName);
+            CompletableFuture.runAsync(() -> fetchPlayerTownInfo(playerName));
         }
     }
     
@@ -128,7 +139,7 @@ public class PlayerNameTagRenderer {
             // Use the same API endpoints as your whereIs command
             JsonObject response = JsonParser.parseString(fetch.GetRequest("https://map.earthmc.net/tiles/players.json")).getAsJsonObject();
             
-            for (var userElement : response.get("players").getAsJsonArray()) {
+            for (JsonElement userElement : response.get("players").getAsJsonArray()) {
                 JsonObject user = userElement.getAsJsonObject();
                 if (user.get("name").getAsString().equalsIgnoreCase(playerName)) {
                     String apiUrl = "https://api.earthmc.net/v3/aurora/location";
@@ -143,12 +154,18 @@ public class PlayerNameTagRenderer {
                     
                     JsonArray locationData = JsonParser.parseString(fetch.Fetch(apiUrl, payload.toString())).getAsJsonArray();
                     
-                    if (!locationData.isEmpty()) {
-                        JsonObject location = locationData.get(0).getAsJsonObject();
-                        String townName = location.has("town") ? location.get("town").getAsString() : null;
-                        String nationName = location.has("nation") ? location.get("nation").getAsString() : null;
+                    if (locationData != null && locationData.size() == 1 && locationData.get(0).isJsonObject()) {
+                        JsonObject data = locationData.get(0).getAsJsonObject();
                         
-                        playerInfoCache.put(playerName, new PlayerTownInfo(townName, nationName));
+                        if (!data.get("isWilderness").getAsBoolean()) {
+                            String townName = data.has("town") ? data.get("town").getAsString() : null;
+                            String nationName = data.has("nation") ? data.get("nation").getAsString() : null;
+                            
+                            playerInfoCache.put(playerName, new PlayerTownInfo(townName, nationName));
+                        } else {
+                            // Clear cache for wilderness players
+                            playerInfoCache.remove(playerName);
+                        }
                     }
                     break;
                 }
