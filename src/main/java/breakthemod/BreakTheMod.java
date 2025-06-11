@@ -20,6 +20,7 @@ import breakthemod.commands.*;
 import breakthemod.commands.economy.calculateGold;
 import breakthemod.commands.economy.calculateStacks;
 import breakthemod.utils.*;
+import breakthemod.events.WorldRenderHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -37,6 +38,7 @@ public class BreakTheMod implements ClientModInitializer {
     public void onInitializeClient() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null)  LOGGER.error("Minecraft client instance is null, cannot initialize commands.");
+        
         // Register commands
         registerCommands(
                 new coords(),
@@ -55,9 +57,19 @@ public class BreakTheMod implements ClientModInitializer {
                 new calculateGold(),
                 new calculateStacks()
         );
+        
+        // Register HUD rendering
         render Render = new render();
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
             Render.renderOverlay(drawContext, MinecraftClient.getInstance());
+        });
+        
+        // Register world rendering for name tags
+        WorldRenderHandler.register();
+        
+        // Clear cache when disconnecting from server
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client1) -> {
+            PlayerNameTagRenderer.clearCache();
         });
     }
 
