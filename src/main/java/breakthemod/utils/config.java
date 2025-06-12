@@ -174,6 +174,10 @@ public class config {
     public boolean isTowny() { return towny;}
     public void setTowny(boolean bl) { towny = bl;}
 
+    static boolean getBoolean(JsonObject obj, String key, boolean defaultVal) {
+        return obj.has(key) ? obj.get(key).getAsBoolean() : defaultVal;
+    }
+
     public void saveConfig() {
         JsonObject configJson = new JsonObject();
         configJson.addProperty("widgetPosition", widgetPosition.name());
@@ -199,10 +203,10 @@ public class config {
                         : WidgetPosition.TOP_LEFT;
                 customX = configJson.has("customX") ? configJson.get("customX").getAsInt() : 0;
                 customY = configJson.has("customY") ? configJson.get("customY").getAsInt() : 0;
-                radarEnabled = !configJson.has("radarEnabled") || configJson.get("radarEnabled").getAsBoolean();
-                enabledOnOtherServers = configJson.has("enabledOnOtherServers") && configJson.get("enabledOnOtherServers").getAsBoolean();
-                dev = configJson.has("dev") ? configJson.get("dev").getAsBoolean() : dev;
-                towny = configJson.has("towny") ? configJson.get("dev").getAsBoolean() : towny;
+                radarEnabled = getBoolean(configJson, "radarEnabled", true);
+                enabledOnOtherServers = getBoolean(configJson, "enabledOnOtherServers", false);
+                dev = getBoolean(configJson, "dev", dev);
+                towny = getBoolean(configJson, "towny", towny);
             } catch (IOException e) {
                 e.printStackTrace();
             }
